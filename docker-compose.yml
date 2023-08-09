@@ -1,19 +1,5 @@
 version: '3'
 services:
-  duckdns:
-    image: lscr.io/linuxserver/duckdns:latest
-    container_name: duckdns
-    environment:
-      - SUBDOMAINS=${DUCKDNS_DOMAIN}
-      - FILE__TOKEN=/run/secrets/duckdns_token
-      - LOG_FILE=true
-      - PUID=1000
-      - PGID=1000
-    secrets:
-       - duckdns_token
-    volumes:
-      - ./duckdns:/config
-    restart: unless-stopped
   # Homeassistant configuration: 
   #    https://community.home-assistant.io/t/improving-docker-security-non-root-configuration/399971/9
   homeassistant:
@@ -24,8 +10,14 @@ services:
       - ./homeassistant:/config
       - /etc/localtime:/etc/localtime:ro
       - /run/dbus:/run/dbus
-    restart: unless-stopped
+    restart: on-failure
     network_mode: host
+    depends_on:
+      mariadb:
+        condition: service_healthy
+        restart: true
+      mosquitto:
+        condition: service_started
     environment:
       - PUID=8123
       - PGID=8123
@@ -55,7 +47,7 @@ services:
       - ./mosquitto/config:/mosquitto/config
       - ./mosquitto/log:/mosquitto/log
       - ./mosquitto/data:/mosquitto/data
-    restart: unless-stopped
+    restart: on-failure
     ports:
       - 1883:1883
     networks:
@@ -72,15 +64,21 @@ services:
        - mariadb_password
     volumes:
       - ./mariadb/data:/var/lib/mysql
-    restart: unless-stopped
+    restart: on-failure
     ports:
       - 3306:3306
     networks:
       - iot-server
+    healthcheck:
+      test: mariadb --user=root --password=$(cat $$MYSQL_ROOT_PASSWORD_FILE) --silent --execute "SELECT 1"
+      start_period: 5s
+      interval: 2s
+      retries: 10
+      timeout: 30s
   traefik:
     image: traefik:v2.10
     container_name: traefik
-    restart: unless-stopped
+    restart: on-failure
     environment:
       - DUCKDNS_TOKEN_FILE=/run/secrets/duckdns_token
       - DUCKDNS_DOMAIN
@@ -98,6 +96,20 @@ services:
        - duckdns_token
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    environment:
+      - SUBDOMAINS=${DUCKDNS_DOMAIN}
+      - FILE__TOKEN=/run/secrets/duckdns_token
+      - LOG_FILE=true
+      - PUID=1000
+      - PGID=1000
+    secrets:
+       - duckdns_token
+    volumes:
+      - ./duckdns:/config
+    restart: on-failure
 
 secrets:
   mariadb_password:
