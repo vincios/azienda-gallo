@@ -1,0 +1,14 @@
+http:
+  routers:
+    api:
+      # The rule matches http://example.com/api/ or http://example.com/dashboard/
+      # but does not match http://example.com/hello
+      rule: Host(`traefik.{{ env "DUCKDNS_DOMAIN"}}.duckdns.org`)
+      entrypoints:
+        - websecure
+        # - traefik  # uncomment to use the :8080 port
+      service: api@internal
+      middlewares:
+        - authentication
+      tls:
+        certResolver: duckdnsResolver

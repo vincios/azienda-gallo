@@ -1,0 +1,22 @@
+
+# Loads default set of integrations. Do not remove.
+default_config:
+
+http:
+  use_x_forwarded_for: true
+  trusted_proxies:
+    - 127.0.0.1       # in case the reverse proxy being on the same IPv4 as the HA
+    - ::1             # in case the reverse proxy being on the same IPv6 as the HA
+    - 172.20.0.0/24   # in case the reverse proxy being under the same docker environment as the HA, and in case the docker IP would change after reboot/restart
+
+# Load frontend themes from the themes folder
+frontend:
+  themes: !include_dir_merge_named themes
+
+automation: !include automations.yaml
+script: !include scripts.yaml
+scene: !include scenes.yaml
+
+recorder:
+  db_url: !secret mariadb_url
+  commit_interval: 30

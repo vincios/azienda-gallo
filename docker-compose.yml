@@ -1,0 +1,116 @@
+version: '3'
+services:
+  duckdns:
+    image: lscr.io/linuxserver/duckdns:latest
+    container_name: duckdns
+    environment:
+      - SUBDOMAINS=${DUCKDNS_DOMAIN}
+      - FILE__TOKEN=/run/secrets/duckdns_token
+      - LOG_FILE=true
+      - PUID=1000
+      - PGID=1000
+    secrets:
+       - duckdns_token
+    volumes:
+      - ./duckdns:/config
+    restart: unless-stopped
+  # Homeassistant configuration: 
+  #    https://community.home-assistant.io/t/improving-docker-security-non-root-configuration/399971/9
+  homeassistant:
+    container_name: homeassistant
+    image: "ghcr.io/home-assistant/home-assistant:stable"
+    volumes:
+      - ./homeassistant/run:/etc/services.d/home-assistant/run
+      - ./homeassistant:/config
+      - /etc/localtime:/etc/localtime:ro
+      - /run/dbus:/run/dbus
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      - PUID=8123
+      - PGID=8123
+      - EXTRA_GID=997 114 112 20
+      - UMASK=007
+      - PACKAGES=iputils
+    devices:
+      - /dev/mem:/dev/mem
+      - /dev/gpiomem:/dev/gpiomem
+    security_opt:
+      - no-new-privileges
+    # cap_add:
+    #  - NET_RAW
+    #  - NET_ADMIN
+    #  - SYS_RAWIO
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.homeassistant.rule=Host(`dashboard.${DUCKDNS_DOMAIN}.duckdns.org`)"
+      - "traefik.http.routers.homeassistant.entrypoints=websecure"
+      - "traefik.http.routers.homeassistant.tls.certresolver=duckdnsResolver"
+      - "traefik.http.services.homeassistant.loadbalancer.server.url=http://${HOST_IP}"
+      - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
+  mosquitto:
+    container_name: mosquitto
+    image: eclipse-mosquitto
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/log:/mosquitto/log
+      - ./mosquitto/data:/mosquitto/data
+    restart: unless-stopped
+    ports:
+      - 1883:1883
+    networks:
+      - iot-server
+  mariadb:
+    container_name: mariadb
+    image: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/mariadb_password
+      MYSQL_DATABASE: homeassistant
+      MYSQL_USER: user
+      MYSQL_PASSWORD_FILE: /run/secrets/mariadb_password
+    secrets:
+       - mariadb_password
+    volumes:
+      - ./mariadb/data:/var/lib/mysql
+    restart: unless-stopped
+    ports:
+      - 3306:3306
+    networks:
+      - iot-server
+  traefik:
+    image: traefik:v2.10
+    container_name: traefik
+    restart: unless-stopped
+    environment:
+      - DUCKDNS_TOKEN_FILE=/run/secrets/duckdns_token
+      - DUCKDNS_DOMAIN
+    ports:
+      - 80:80
+      - 443:443
+      - 8080:8080
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/config:/etc/traefik
+      - ./traefik/log:/var/log/traefik
+    networks:
+      - iot-server
+    secrets:
+       - duckdns_token
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+secrets:
+  mariadb_password:
+     file: ./secrets/mariadb_password.txt
+  duckdns_token:
+     file: ./secrets/duckdns_token.txt
+
+networks:
+  iot-server:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "false"
+    ipam:
+      driver: default
+      config:
+        - subnet: 172.20.0.0/24

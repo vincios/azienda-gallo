@@ -1,0 +1,6 @@
+http:
+  middlewares:
+    authentication:
+      basicAuth:
+        users:
+          - "traefik:$apr1$sjkgre82$t3Fj7zaUNfnITAdd4LsvZ."
