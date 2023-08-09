@@ -24,17 +24,17 @@
 
 5. Set the mosquitto password
 
-  1. Run the mosquitto container
-    
-      ```sh
-      $ docker exec -it mosquitto sh
-      ```
+    1. Run the mosquitto container
+        
+        ```sh
+        $ docker exec -it mosquitto sh
+        ```
 
-  2. Set the password for the user `mosquitto_usr`
+    2. Set the password for the user `mosquitto_usr`
 
-      ```sh
-      $ mosquitto_passwd -c /mosquitto/config/mosquitto.passwd mosquitto_usr
-      ```
+        ```sh
+        $ mosquitto_passwd -c /mosquitto/config/mosquitto.passwd mosquitto_usr
+        ```
 
 6. Set the LetsEncrypt email in the `traefik/config/traefik.yml` file
 
