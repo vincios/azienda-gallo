@@ -38,6 +38,8 @@
 
 6. Set the LetsEncrypt email in the `traefik/config/traefik.yml` file
 
+7. Set the [Systemd Service](#systemd-service)
+
 ## Home Assistant
 1. Edit the `secret.yml` file, with the following content
 
@@ -58,3 +60,53 @@
 4. Add the following Custom Components
 
     1.
+
+5. Import (i.e. copy-paste) into the HomeAssistant dashboard the `frontend.yml` file
+
+
+## Systemd Service
+Usually, set `restart: unless-stopped` on all docker compose containers should be enough to restart them after a system reboot. But, for some reasons, in this way the docker's hostname resolution [doesn't work](https://github.com/moby/libnetwork/issues/2049) after the reboot. So, the `homeassistant` container cannot connect to the `mariadb` and `mosquitto` services.
+
+As workaround, we'll manually start and stop the docker compose with a `systemd` service.
+
+1. Create the file `/etc/systemd/system/iot-server.service` with the following content
+
+    <details>
+    <summary>✨ Click to see the code</summary>
+
+    ```ini
+    [Unit]
+    Description=IOT Server Service
+    Requires=docker.service
+    After=docker.service
+
+    [Service]
+    Type=oneshot
+    RemainAfterExit=yes
+    WorkingDirectory=/home/raspi/iot-server
+    ExecStart=/usr/bin/docker compose up
+    ExecStop=/usr/bin/docker compose down
+    TimeoutStartSec=0
+
+    [Install]
+    WantedBy=multi-user.target
+    ```
+
+    </details>
+
+    ⚠️ Make sure that `WorkingDirectory` points to your `docker-compose.yml` folder.
+
+2. Set file permissions
+
+    ```bash
+    $ sudo chown root:root /etc/systemd/system/iot-server.service
+    $ sudo chmod 644 /etc/systemd/system/iot-server.service
+    ```
+
+4. Reload systemd and enable the service
+
+    ```bash
+    $ sudo systemctl daemon-reload
+    $ sudo systemctl enable iot-server.service
+    $ sudo systemctl start iot-server.service
+    ```
