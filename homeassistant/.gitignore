@@ -45,4 +45,7 @@ ozw_log.txt
 # Development files
 custom_components
 
+# Backups
+backups/
+
 # End of https://www.toptal.com/developers/gitignore/api/homeassistant
