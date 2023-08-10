@@ -1,10 +1,4 @@
 #!/bin/bash
-# Create the user
-echo "Setting privileges..."
-sudo chown -R homeassistant:homeassistant ./homeassistant/
-sudo chmod -R g+rwx ./homeassistant/
-sudo chmod +x ./homeassistant/run
-
 # Create files and folders
 FOLDERS=(./secrets ./mariadb/data/ ./mosquitto/data ./mosquitto/log ./traefik/log ./traefik/config/acme/)
 FILES=(./secrets/duckdns_token.txt ./secrets/mariadb_password.txt ./secrets/vscode_password.txt ./mosquitto/config/mosquitto.passwd)
@@ -60,3 +54,8 @@ cat > ./homeassistant/secrets.yaml <<EOL
 # Learn more at https://www.home-assistant.io/docs/configuration/secrets/
 mariadb_url: mysql://<YOUR_MYSQL_USER>:<YOUR_MYSQL_PASSWORD>@mariadb/homeassistant?charset=utf8mb4
 EOL
+
+echo "Setting privileges..."
+sudo chown -R homeassistant:homeassistant ./homeassistant/
+sudo chmod -R g+rwx ./homeassistant/
+sudo chmod +x ./homeassistant/run
