@@ -9,7 +9,13 @@
 
 2. [Install Docker](https://docs.docker.com/engine/install/raspbian/)
 
-    > 💡 According the official page, the recommended method to install docker in production should be [using the repository](https://docs.docker.com/engine/install/raspbian/#install-using-the-repository). But, if it doesn't work (packages not found error), use the [convenience script](https://docs.docker.com/engine/install/raspbian/#install-using-the-convenience-script)
+    💡 According the official page, the recommended method to install docker in production should be [using the repository](https://docs.docker.com/engine/install/raspbian/#install-using-the-repository). If it doesn't work (packages not found error), use the [convenience script](https://docs.docker.com/engine/install/raspbian/#install-using-the-convenience-script).
+
+    💡 In case you got a `permission denied while trying to connect to the Docker daemon socket` error, make sure that your user is in the `docker` group
+
+    ```sh
+    $ sudo usermod -aG docker ${USER}
+    ```
 
 3. Create a `homeassistant` user and a `homeassistant` group
 
@@ -74,7 +80,7 @@
         $ docker compose up
         ```
 
-    2. When you see `Starting homeassistant...`, open the browser at the url
+    2. When you see `Starting homeassistant`, open the browser at the url
 
         ```
         http://<YOUR_HOST_LOCAL_IP>:8123
@@ -88,15 +94,19 @@
         https://dashboard.<DUCKDNS_DOMAIN>.duckdns.org
         https://editor.<DUCKDNS_DOMAIN>.duckdns.org
         https://traefik.<DUCKDNS_DOMAIN>.duckdns.org
-        ws://mqtt.<DUCKDNS_DOMAIN>.duckdns.org
+
+        # MQTT endpoints
+        ws://mqtt.<DUCKDNS_DOMAIN>.duckdns.org:443
+        mqtt://mqtt.<DUCKDNS_DOMAIN>.duckdns.org:1883
         ```
 
-        ⚠️ To check `ws://mqtt.<DUCKDNS_DOMAIN>.duckdns.org` you need a [MQTT client](http://mqtt-explorer.com/).
+        ⚠️ To check the MQTT endpoints you need a [MQTT client](http://mqtt-explorer.com/).
+
+        💡 In case of certificate issues, remeber that the certification process could take some minutes. See the Traefik logs to check the certification state.
 
 11. Stop with `Ctrl-C` and dispose the containers
 
     ```sh
-    $ exit
     $ docker compose down
     ```
 
@@ -173,7 +183,7 @@ As workaround, we'll manually start and stop the docker compose with a `systemd`
     Type=oneshot
     RemainAfterExit=yes
     WorkingDirectory=/home/raspi/iot-server
-    ExecStart=/usr/bin/docker compose up
+    ExecStart=/usr/bin/docker compose up -d
     ExecStop=/usr/bin/docker compose down
     TimeoutStartSec=0
 
