@@ -1,6 +1,12 @@
 # IOT Server configuration
 
 ## General Setup
+0. Clone this repository
+
+    ```sh
+    $ git clone https://github.com/vincios/azienda-gallo.git
+    ```
+
 1. Create a `homeassistant` user and a `homeassistant` group
 
     ```sh
@@ -48,31 +54,44 @@
 
 7. Fill the `homeassistant/secrets.yaml` file with the required fields
 
-8. Do a first run with logs to check for errors
+8. Perform a first run. Use the logs to check for errors
+
+    1. Start the containers, without the `-d` option
+    
+        ```sh
+        $ docker compose up
+        ```
+
+    2. When you see `Starting homeassistant...`, open the browser at the url
+
+        ```
+        http://<YOUR_HOST_LOCAL_IP>:8123
+        ```
+
+        And complete the Onboarding process
+    
+    3. Check if also the following urls works
+
+        ```
+        https://dashboard.<DUCKDNS_DOMAIN>.duckdns.org
+        https://editor.<DUCKDNS_DOMAIN>.duckdns.org
+        https://traefik.<DUCKDNS_DOMAIN>.duckdns.org
+        ws://mqtt.<DUCKDNS_DOMAIN>.duckdns.org
+        ```
+
+        ⚠️ To check `ws://mqtt.<DUCKDNS_DOMAIN>.duckdns.org` you need a [MQTT client](http://mqtt-explorer.com/).
+
+9. Stop with `Ctrl-C` and dispose the containers
 
     ```sh
-    $ docker compose up
+    $ exit
+    $ docker compose down
     ```
-
-9. If everything works, stop with `Ctrl-C` and dispose the containers
-
-        ```sh
-        $ exit
-        $ docker compose down
-        ```
 
 10. Install the [Systemd Service](#systemd-service)
 
 ## Home Assistant
-1. Edit the `secret.yml` file, with the following content
-
-    ```yml
-    # Use this file to store secrets like usernames and passwords.
-    # Learn more at https://www.home-assistant.io/docs/configuration/secrets/
-    mariadb_url: mysql://user:<YOUR_MARIADB_PASSWORD>@mariadb/homeassistant?charset=utf8mb4
-    ```
-
-2. Add the following integrations:
+1. Add the following integrations:
 
     1. `MQTT`
 
@@ -80,11 +99,11 @@
     2. ESPHome (if not auto dicovered)
     3. [HACS](https://hacs.xyz/)
 
-4. Add the following Custom Components
+2. Add the following Custom Components
 
     1.
 
-5. Import (i.e. copy-paste) into the HomeAssistant dashboard the `frontend.yml` file
+3. Import (i.e. copy-paste) into the HomeAssistant dashboard the `frontend.yml` file
 
 
 ## Mosquitto
