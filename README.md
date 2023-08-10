@@ -11,14 +11,14 @@
 
 2. Run the `init.sh` script
 
-3. Make an `.env` file, with the following content
+3. Fill the `.env` file, with the following content
 
     ```env
     DUCKDNS_DOMAIN=<YOUR_DUCKDNS_DOMAIN>
     HOST_IP=<YOUR_HOST_STATIC_IP>
     ```
 
-4. Fill the secrets files, into the `secrets` folder
+4. Fill the secrets files, into the `secrets` folder   
 
     💡 In `mariadb_password.txt` you can write anything, and it will be your database's root and user password
 

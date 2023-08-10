@@ -35,5 +35,15 @@ for file in "${FILES[@]}"; do
 done
 
 # Create the acme.json file
+echo "Creating acme.json file..."
 touch ./traefik/config/acme/acme.json
 chmod 600 ./traefik/config/acme/acme.json
+
+# Create the .env file
+echo "Creating .env file..."
+HOST_IP=`hostname -I | cut -d " " -f1`
+
+cat > .env <<EOL
+DUCKDNS_DOMAIN=<YOUR_DUCKDNS_DOMAIN>
+HOST_IP=${HOST_IP}
+EOL
