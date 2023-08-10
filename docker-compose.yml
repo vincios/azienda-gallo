@@ -111,11 +111,38 @@ services:
       - ./duckdns:/config
     restart: on-failure
 
+  # Visual Studio code
+  vscode:
+    container_name: vscode
+    image: codercom/code-server:latest
+    restart: on-failure
+    volumes:
+      - .:/home/coder/project
+    ports:
+      - "8443:8443"
+    group_add:
+      - "8123"
+    # Workaround to use secrets to set the PASSWORD envrionment variable
+    # See: https://stackoverflow.com/questions/48094850/docker-stack-setting-environment-variable-from-secrets
+    entrypoint: [ '/bin/bash', '-c', 'export PASSWORD=$$(cat /var/run/secrets/vscode_password); source /usr/bin/entrypoint.sh --disable-telemetry --bind-addr 0.0.0.0:8443 /home/coder/project']
+    secrets:
+       - vscode_password
+    networks:
+      - iot-server
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.vscode.rule=Host(`editor.${DUCKDNS_DOMAIN}.duckdns.org`)"
+      - "traefik.http.routers.vscode.entrypoints=websecure"
+      - "traefik.http.routers.vscode.tls.certresolver=duckdnsResolver"
+      - "traefik.http.services.vscode.loadbalancer.server.port=8443"
+
 secrets:
   mariadb_password:
      file: ./secrets/mariadb_password.txt
   duckdns_token:
      file: ./secrets/duckdns_token.txt
+  vscode_password:
+      file: ./secrets/vscode_password.txt
 
 networks:
   iot-server:
