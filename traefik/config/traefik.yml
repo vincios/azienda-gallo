@@ -9,6 +9,9 @@ entryPoints:
   websecure:
     address: ":443"
     http:
+  mqtt:
+    address: ":1883"
+
 certificatesResolvers:
   duckdnsResolver:
     # Enable ACME (Let's Encrypt): automatic SSL.

@@ -7,7 +7,7 @@ sudo chmod +x ./homeassistant/run
 
 # Create files and folders
 FOLDERS=(./secrets ./mariadb/data/ ./mosquitto/data ./mosquitto/log ./traefik/log ./traefik/config/acme/)
-FILES=(./secrets/duckdns_token.txt ./secrets/mariadb_password.txt ./secrets/vscode_password.txt)
+FILES=(./secrets/duckdns_token.txt ./secrets/mariadb_password.txt ./secrets/vscode_password.txt ./mosquitto/config/mosquitto.passwd)
 
 echo "Creating folders..."
 for folder in "${FOLDERS[@]}"; do
@@ -19,11 +19,12 @@ for folder in "${FOLDERS[@]}"; do
     echo -e "\talready exists"
   fi
 
+  echo -e "\n"
 done
 
 echo " "
 
-# Create secrets files
+# Create files
 echo "Creating files..."
 for file in "${FILES[@]}"; do
   echo -n "  $file"
@@ -34,6 +35,7 @@ for file in "${FILES[@]}"; do
     echo -e "\talready exists"
   fi
 
+  echo -e "\n"
 done
 
 echo " "

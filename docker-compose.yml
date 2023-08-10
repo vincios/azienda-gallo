@@ -50,10 +50,23 @@ services:
       - ./mosquitto/log:/mosquitto/log
       - ./mosquitto/data:/mosquitto/data
     restart: on-failure
+    expose:
+      - 1883:1883  # tcp (mqtt://) protocol with TLS, Traefik will redirect traffic from outside here
     ports:
-      - 1883:1883
+      - 9001:9001  # ws protocol, Traefik will redirect ws:// traffic from 443 here. But also accessible inside the local LAN without TLS
+      - 1884:1884  # tcp (mqtt://) protocol, only for traffic without TLS
     networks:
       - iot-server
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.mqtt.rule=Host(`mqtt.${DUCKDNS_DOMAIN}.duckdns.org`)"
+      - "traefik.http.routers.mqtt.entrypoints=websecure"
+      - "traefik.http.routers.mqtt.tls.certresolver=duckdnsResolver"
+      - "traefik.http.services.mqtt.loadbalancer.server.port=9001"
+      - "traefik.tcp.routers.mqtt.rule=HostSNI(`*`)"
+      - "traefik.tcp.routers.mqtt.entrypoints=mqtt"
+      - "traefik.tcp.routers.mqtt.tls.certresolver=duckdnsResolver"
+      - "traefik.tcp.services.mqtt.loadbalancer.server.port=1883"
 
   # MariaDB database
   mariadb:
@@ -92,6 +105,7 @@ services:
       - 80:80
       - 443:443
       - 8080:8080
+      - 1883:1883
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       - ./traefik/config:/etc/traefik
