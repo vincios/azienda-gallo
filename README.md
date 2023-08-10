@@ -132,36 +132,19 @@
 Mosquitto MQTT Broker is protected with TLS. You can access to the broker either inside the local network or from outside, and either with the **ws://** protocol or the **TCP (mqtt://)** protocol.
 
 Inside the local network:
-- **mqtt:// protocol (with TLS)**
-    
-    Address: YOUR_HOST_STATIC_IP
-    
-    Port: 1883
 
-- **mqtt:// protocol (without TLS)**
-    
-    Address: YOUR_HOST_STATIC_IP
-    
-    Port: 1884
-
-- **ws:// protocol (without TLS)**
-    
-    Address: YOUR_HOST_STATIC_IP
-    
-    Port: 9001
+|            **Protocol**            |     **Address**     | **Port** | **Note** |
+|:----------------------------------:|:-------------------:|:--------:|:--------:|
+| **mqtt:// protocol (with TLS)**    | YOUR_HOST_STATIC_IP | 1883     |          |
+| **mqtt:// protocol (without TLS)** | YOUR_HOST_STATIC_IP | 1884     |          |
+| **ws:// protocol (without TLS)**   | YOUR_HOST_STATIC_IP | 9001     |          |
 
 From Internet:
-- **mqtt:// protocol (with TLS)** (only if port 1883 opened on your router)
-    
-    Address: mqtt.<YOUR_DUCKDNS_DOMAIN>.duckdns.org
-    
-    Port: 1883
 
-- **ws:// protocol (with TLS)**
-    
-    Address: mqtt.<YOUR_DUCKDNS_DOMAIN>.duckdns.org
-
-    Port: 443
+|           **Protocol**          |           **Address**           | **Port** |                 **Note**                |
+|:-------------------------------:|:-------------------------------:|:--------:|:---------------------------------------:|
+| **mqtt:// protocol (with TLS)** | mqtt.DUCKDNS_DOMAIN.duckdns.org | 1883     | Only if port 1883 opened on your router |
+| **ws:// protocol (with TLS)**   | mqtt.DUCKDNS_DOMAIN.duckdns.org | 443      |                                         |
 
 ## Systemd Service
 Usually, set `restart: unless-stopped` on all docker compose containers should be enough to restart them after a system reboot. But, for some reasons, in this way the docker's hostname resolution [doesn't work](https://github.com/moby/libnetwork/issues/2049) after the reboot. So, the `homeassistant` container cannot connect to the `mariadb` and `mosquitto` services.
