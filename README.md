@@ -1,36 +1,46 @@
 # IOT Server configuration
 
 ## General Setup
-0. Clone this repository
+1. Clone this repository
 
     ```sh
     $ git clone https://github.com/vincios/azienda-gallo.git
     ```
 
-1. Create a `homeassistant` user and a `homeassistant` group
+2. [Install Docker](https://docs.docker.com/engine/install/raspbian/)
+
+    > 💡 According the official page, the recommended method to install docker in production should be [using the repository](https://docs.docker.com/engine/install/raspbian/#install-using-the-repository). But, if it doesn't work (packages not found error), use the [convenience script](https://docs.docker.com/engine/install/raspbian/#install-using-the-convenience-script)
+
+3. Create a `homeassistant` user and a `homeassistant` group
 
     ```sh
     $ sudo groupadd --gid 8123 homeassistant
-    $ sudo useradd -r --uid 8123 -gid 8123 homeassistant
+    $ sudo useradd -r --uid 8123 -g 8123 homeassistant
     $ sudo usermod -a -G homeassistant $USER
     ```
 
-2. Run the `init.sh` script
+4. Run the `init.sh` script
 
-3. Fill the `.env` file, with the following content
+5. Fill the `.env` file, with the following content
 
     ```env
     DUCKDNS_DOMAIN=<YOUR_DUCKDNS_DOMAIN>
     HOST_IP=<YOUR_HOST_STATIC_IP>
     ```
 
-4. Fill the secrets files, into the `secrets` folder   
+6. Fill the secrets files, into the `secrets` folder   
 
-    ⚠️ Make sure to not add special characters (like newlines or unwanted spaces) in the secret files!
+    ⚠️ Make sure to not add special characters (like newlines or unwanted spaces) in the secret files! 
+    
+    ⚠️ The `nano` editor automatically adds a newline EOF character on save. To prevent this, open the `nano` editor with the `-L` option.
+
+    ```sh
+    $ nano -L duckdns_token.txt
+    ```
 
     💡 In `mariadb_password.txt` you can write anything, and it will be your database's root and user password
 
-5. Set the mosquitto password
+7. Set the mosquitto password
 
     1. Run the mosquitto container
         
@@ -52,11 +62,11 @@
         $ docker compose down
         ```
 
-6. Set the LetsEncrypt email in the `traefik/config/traefik.yml` file
+8. Set the LetsEncrypt email in the `traefik/config/traefik.yml` file
 
-7. Fill the `homeassistant/secrets.yaml` file with the required fields
+9. Fill the `homeassistant/secrets.yaml` file with the required fields
 
-8. Perform a first run. Use the logs to check for errors
+10. Perform a first run. Use the logs to check for errors
 
     1. Start the containers, without the `-d` option
     
@@ -83,14 +93,14 @@
 
         ⚠️ To check `ws://mqtt.<DUCKDNS_DOMAIN>.duckdns.org` you need a [MQTT client](http://mqtt-explorer.com/).
 
-9. Stop with `Ctrl-C` and dispose the containers
+11. Stop with `Ctrl-C` and dispose the containers
 
     ```sh
     $ exit
     $ docker compose down
     ```
 
-10. Install the [Systemd Service](#systemd-service)
+12. Install the [Systemd Service](#systemd-service)
 
 ## Home Assistant
 1. Add the following integrations:
