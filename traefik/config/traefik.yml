@@ -37,7 +37,7 @@ certificatesResolvers:
       # LetsEncrypt Staging Server, use it for testing
       # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
 log:
-  level: "DEBUG"
+  level: "INFO"
   filePath: "/var/log/traefik/traefik.log"
 accessLog:
   filePath: "/var/log/traefik/access.log"
