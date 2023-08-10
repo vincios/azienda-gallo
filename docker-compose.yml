@@ -40,6 +40,8 @@ services:
       - "traefik.http.routers.homeassistant.tls.certresolver=duckdnsResolver"
       - "traefik.http.services.homeassistant.loadbalancer.server.url=http://${HOST_IP}"
       - "traefik.http.services.homeassistant.loadbalancer.server.port=8123"
+
+  # Mosquitto MQTT Broker
   mosquitto:
     container_name: mosquitto
     image: eclipse-mosquitto
@@ -52,6 +54,8 @@ services:
       - 1883:1883
     networks:
       - iot-server
+
+  # MariaDB database
   mariadb:
     container_name: mariadb
     image: mariadb
@@ -75,6 +79,8 @@ services:
       interval: 2s
       retries: 10
       timeout: 30s
+
+  # Traefik reverse proxy
   traefik:
     image: traefik:v2.10
     container_name: traefik
@@ -96,6 +102,8 @@ services:
        - duckdns_token
     extra_hosts:
       - "host.docker.internal:host-gateway"
+  
+  # DuckDNS update service
   duckdns:
     image: lscr.io/linuxserver/duckdns:latest
     container_name: duckdns
