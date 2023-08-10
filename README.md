@@ -36,9 +36,16 @@
         $ mosquitto_passwd -c /mosquitto/config/mosquitto.passwd mosquitto_usr
         ```
 
+    3. Exit and dispose the container
+
+        ```sh
+        $ exit
+        $ docker compose down mosquitto
+        ```
+
 6. Set the LetsEncrypt email in the `traefik/config/traefik.yml` file
 
-7. Set the [Systemd Service](#systemd-service)
+7. Install the [Systemd Service](#systemd-service)
 
 ## Home Assistant
 1. Edit the `secret.yml` file, with the following content
