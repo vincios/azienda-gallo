@@ -53,3 +53,10 @@ cat > .env <<EOL
 DUCKDNS_DOMAIN=<YOUR_DUCKDNS_DOMAIN>
 HOST_IP=${HOST_IP}
 EOL
+
+echo "Creating homeassistant/secrets.yaml file..."
+cat > ./homeassistant/secrets.yaml <<EOL
+# Use this file to store secrets like usernames and passwords.
+# Learn more at https://www.home-assistant.io/docs/configuration/secrets/
+mariadb_url: mysql://<YOUR_MYSQL_USER>:<YOUR_MYSQL_PASSWORD>@mariadb/homeassistant?charset=utf8mb4
+EOL
