@@ -26,6 +26,8 @@
 
 4. Fill the secrets files, into the `secrets` folder   
 
+    ⚠️ Make sure to not add special characters (like newlines or unwanted spaces) in the secret files!
+
     💡 In `mariadb_password.txt` you can write anything, and it will be your database's root and user password
 
 5. Set the mosquitto password
