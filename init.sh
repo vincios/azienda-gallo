@@ -21,6 +21,8 @@ for folder in "${FOLDERS[@]}"; do
 
 done
 
+echo " "
+
 # Create secrets files
 echo "Creating files..."
 for file in "${FILES[@]}"; do
@@ -33,6 +35,8 @@ for file in "${FILES[@]}"; do
   fi
 
 done
+
+echo " "
 
 # Create the acme.json file
 echo "Creating acme.json file..."
