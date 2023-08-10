@@ -33,6 +33,9 @@ certificatesResolvers:
         provider: "duckdns"
         # Wait x seconds before traefik checks the TXT record
         delayBeforeCheck: 20
+
+      # LetsEncrypt Staging Server, use it for testing
+      # caServer: https://acme-staging-v02.api.letsencrypt.org/directory
 log:
   level: "DEBUG"
   filePath: "/var/log/traefik/traefik.log"
