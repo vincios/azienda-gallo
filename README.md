@@ -41,12 +41,27 @@
 
         ```sh
         $ exit
-        $ docker compose down mosquitto
+        $ docker compose down
         ```
 
 6. Set the LetsEncrypt email in the `traefik/config/traefik.yml` file
 
-7. Install the [Systemd Service](#systemd-service)
+7. Fill the `homeassistant/secrets.yaml` file with the required fields
+
+8. Do a first run with logs to check for errors
+
+    ```sh
+    $ docker compose up
+    ```
+
+9. If everything works, stop with `Ctrl-C` and dispose the containers
+
+        ```sh
+        $ exit
+        $ docker compose down
+        ```
+
+10. Install the [Systemd Service](#systemd-service)
 
 ## Home Assistant
 1. Edit the `secret.yml` file, with the following content
