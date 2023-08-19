@@ -20,3 +20,49 @@ scene: !include scenes.yaml
 recorder:
   db_url: !secret mariadb_url
   commit_interval: 30
+  exclude:
+    entities:
+      - sensor.date
+      - sensor.time
+      - sensor.date_time
+      - sensor.day_of_the_week_it
+      - sensor.month_it
+    entity_globs:
+      - sensor.bmod_*
+      - binary_sensor.bmod_*
+      - media_player.bmod_*
+      - light.bmod_*
+      # TODO: generalize this list
+      - sensor.75a0efd7-6b8e4c5e*
+      - binary_sensor.75a0efd7-6b8e4c5e*
+      - media_player.75a0efd7-6b8e4c5e*
+      - light.75a0efd7-6b8e4c5e*
+      - sensor.4a14b242-01f81d99*
+      - binary_sensor.4a14b242-01f81d99*
+      - media_player.4a14b242-01f81d99*
+      - light.4a14b242-01f81d99*
+      - sensor.8b33fa1e-75f6e2aa*
+      - binary_sensor.8b33fa1e-75f6e2aa*
+      - media_player.8b33fa1e-75f6e2aa*
+      - light.8b33fa1e-75f6e2aa*
+
+# Custom sensors
+sensor:
+  - platform: time_date
+    display_options:
+      - 'time'  # will create a sensor.time entity
+      - 'date'  # will create a sensor.date entity
+      - 'date_time'  # will create a sensor.date_time entity
+
+# Custom templates
+template:
+  - sensor:
+    - name: "Day of the Week (IT)"
+      unique_id: d01b02b4-594b-4cbc-8b64-0d21eb223791
+      state: >
+        {{ ['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'][now().weekday()] }}
+    - name: "Month (IT)"
+      unique_id: 56e0d9ca-b1d5-4f53-89fe-d5b1989e4c13
+      state: >
+        {{ ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 'Lugio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'][now().month - 1] }}
+

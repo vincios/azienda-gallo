@@ -1,1 +1,13 @@
-[]
+- id: '1692201461872'
+  alias: mqtt
+  description: ''
+  trigger:
+  - platform: mqtt
+    topic: tx-o-hum1
+  condition: []
+  action:
+  - service: logbook.log
+    data:
+      name: Nuovo messaggio in mqtt
+      message: nessaggio
+  mode: single
