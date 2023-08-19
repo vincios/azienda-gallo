@@ -1,6 +1,6 @@
 #!/bin/bash
 # Create files and folders
-FOLDERS=(./secrets ./mariadb/data/ ./mosquitto/data ./mosquitto/log ./traefik/log ./traefik/config/acme/)
+FOLDERS=(./secrets ./mariadb/data/ ./mosquitto/data ./mosquitto/log ./traefik/log ./traefik/config/acme/ ./homeassistant/custom_components)
 FILES=(./secrets/duckdns_token.txt ./secrets/mariadb_password.txt ./secrets/vscode_password.txt ./mosquitto/config/mosquitto.passwd)
 
 echo "Creating folders..."
@@ -57,5 +57,6 @@ EOL
 
 echo "Setting privileges..."
 sudo chown -R homeassistant:homeassistant ./homeassistant/
+sudo chmod -R u+rwx ./homeassistant/
 sudo chmod -R g+rwx ./homeassistant/
 sudo chmod +x ./homeassistant/run
