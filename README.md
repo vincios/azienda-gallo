@@ -146,6 +146,14 @@ From Internet:
 | **mqtt:// (with TLS)** | mqtt.DUCKDNS_DOMAIN.duckdns.org | 1883     | Only if port 1883 opened on your router |
 | **ws:// (with TLS)**   | mqtt.DUCKDNS_DOMAIN.duckdns.org | 443      |                                         |
 
+
+### mosquitto_sub
+To use `mosquitto_sub` with TLS you must add the path to the certificate using the `--capath` argument. On Debian, you can use the default certificates folder (`/etc/ssl/certs`)
+
+```bash
+$ mosquitto_sub -v -h mqtt.DUCKDNS_DOMAIN.duckdns.org -p 1883 -u USER -P PASSWORD -t TOPIC -i CLIENT_ID --capath /etc/ssl/certs/
+```
+
 ## Systemd Service
 Usually, set `restart: unless-stopped` on all docker compose containers should be enough to restart them after a system reboot. But, for some reasons, in this way the docker's hostname resolution [doesn't work](https://github.com/moby/libnetwork/issues/2049) after the reboot. So, the `homeassistant` container cannot connect to the `mariadb` and `mosquitto` services.
 
